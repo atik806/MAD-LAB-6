@@ -1,14 +1,30 @@
+import AddStudentForm from "../../components/add-student-form";
 import SearchBar from "@/components/search-bar";
 import StudentDetail from "@/components/student-detail";
 import StudentItem from "@/components/student-item";
 import { Student, STUDENTS } from "@/data/students";
 import React, { useState } from "react";
-import { Text, StyleSheet, View, FlatList } from "react-native";
+import { Pressable, Text, StyleSheet, View, FlatList } from "react-native";
 
 export default function HomePage() {
     const [query, setQuery] = useState<string>("");
 
     const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+
+    const [students, setStudents] = useState<Student[]>(STUDENTS);
+    const [showForm, setShowForm] = useState(false);
+
+    const handleNewStudent = (newStudent: Student) => {
+        // Lifting state up in action: the form hands the new
+        // student back to this parent screen, which prepends
+        // it to the list.
+        setStudents((prev) => [newStudent, ...prev]);
+        setShowForm(false);
+    };
+
+    if (showForm) {
+        return <AddStudentForm onSubmitSuccess={handleNewStudent} />;
+    }
 
     const filtered = STUDENTS.filter((s) => {
         return s.name.toLowerCase().includes(query.toLowerCase()) || s.department.toLowerCase().includes(query.toLowerCase());
@@ -23,6 +39,9 @@ export default function HomePage() {
             {/* NEW: Add a page title for the student list */}
             <View style={styles.titleBar}>
                 <Text style={styles.title}>Student Directory</Text>
+                <Pressable onPress={() => setShowForm(true)}>
+                    <Text style={{ color: "#FFFFFF", fontWeight: "700" }}>+ Add</Text>
+                </Pressable>
             </View>
 
             <SearchBar value={query} onChangeText={setQuery}></SearchBar>

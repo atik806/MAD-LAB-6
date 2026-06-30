@@ -77,15 +77,23 @@ export default function AddStudentForm({ onSubmitSuccess }: AddStudentFormProps)
 
     // This state tracks which fields have been touched (blurred) by the user.
     const [touched, setTouched] = useState<Record<string, boolean>>({});
+    // This state tracks whether the user has attempted to submit the form.
+    const [submitAttempted, setSubmitAttempted] = useState(false);
     const markTouched = (field: keyof FormData) => {
         setTouched((prev) => ({ ...prev, [field]: true }));
+    };
+
+    // Helper function to get the error message for a field, considering touched and submitAttempted states
+    const getFieldError = (field: keyof FormErrors) => {
+        return touched[field] || submitAttempted ? errors[field] : undefined;
     };
 
     // This state is used to trigger the submit effect when the user presses the submit button.
     const [submitTrigger, setSubmitTrigger] = useState(false);
     const handleSubmitPress = () => {
         // Mark every field touched so any remaining errors show
-        setTouched({ name: true, studentId: true, department: true, bio: true });
+        setTouched((prev) => ({ ...prev, name: true, studentId: true, department: true, bio: true }));
+        setSubmitAttempted(true);
         if (isFormValid) {
             setIsSubmitting(true);
             setSubmitTrigger(true);
@@ -152,13 +160,13 @@ export default function AddStudentForm({ onSubmitSuccess }: AddStudentFormProps)
             <Text style={styles.heading}>Join the Directory</Text>
             <Text style={styles.subheading}>Fill in your details below to add yourself to StudentDirectory.</Text>
 
-            <FormField label="Full Name" value={formData.name} onChangeText={(text) => updateField("name", text)} placeholder="e.g. Ashraful Haque" error={errors.name} onBlur={() => markTouched("name")} />
+            <FormField label="Full Name" value={formData.name} onChangeText={(text) => updateField("name", text)} placeholder="e.g. Ashraful Haque" error={getFieldError("name")} onBlur={() => markTouched("name")} />
 
-            <FormField label="Student ID" value={formData.studentId} onChangeText={(text) => updateField("studentId", text)} placeholder="e.g. 22-12345-1" autoCapitalize="none" error={errors.studentId} onBlur={() => markTouched("studentId")} />
+            <FormField label="Student ID" value={formData.studentId} onChangeText={(text) => updateField("studentId", text)} placeholder="e.g. 22-12345-1" autoCapitalize="none" error={getFieldError("studentId")} onBlur={() => markTouched("studentId")} />
 
-            <FormField label="Department" value={formData.department} onChangeText={(text) => updateField("department", text)} placeholder="e.g. Computer Science" error={errors.department} onBlur={() => markTouched("department")} />
+            <FormField label="Department" value={formData.department} onChangeText={(text) => updateField("department", text)} placeholder="e.g. Computer Science" error={getFieldError("department")} onBlur={() => markTouched("department")} />
 
-            <FormField label="Bio" value={formData.bio} onChangeText={(text) => updateField("bio", text)} placeholder="A short sentence about yourself..." multiline error={errors.bio} onBlur={() => markTouched("bio")} />
+            <FormField label="Bio" value={formData.bio} onChangeText={(text) => updateField("bio", text)} placeholder="A short sentence about yourself..." multiline error={getFieldError("bio")} onBlur={() => markTouched("bio")} />
 
             <FormField label="Skills (comma-separated)" value={formData.skillsText} onChangeText={(text) => updateField("skillsText", text)} placeholder="e.g. React Native, TypeScript, Figma" autoCapitalize="none" onBlur={() => markTouched("skillsText")} />
 
