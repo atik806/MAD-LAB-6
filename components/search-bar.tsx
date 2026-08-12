@@ -1,18 +1,22 @@
 // components/search-bar.tsx
 
-import React from "react";
+import React, { forwardRef } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
+
+
 
 interface SearchBarProps {
     value: string;
     onChangeText: (text: string) => void;
     placeholder?: string; // the ? means this prop is optional
+    debounceDelay?: number; // in ms, default 300
 }
 
-export default function SearchBar({ value, onChangeText, placeholder }: SearchBarProps) {
+const SearchBar = forwardRef<TextInput, SearchBarProps>(({ value, onChangeText, placeholder }, ref) => {
     return (
         <View style={styles.container}>
             <TextInput
+                ref={ref}
                 style={styles.input}
                 value={value}
                 onChangeText={onChangeText}
@@ -25,7 +29,11 @@ export default function SearchBar({ value, onChangeText, placeholder }: SearchBa
             />
         </View>
     );
-}
+});
+SearchBar.displayName = "SearchBar";
+
+export default SearchBar;
+
 
 const styles = StyleSheet.create({
     container: {
