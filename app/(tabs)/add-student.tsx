@@ -1,14 +1,46 @@
+import * as Location from "expo-location";
 import React from "react";
-import { View, StyleSheet, SafeAreaView } from "react-native";
-import AddStudentForm from "../../components/add-student-form";
+import { Button, StyleSheet, Text } from "react-native";
+
 
 export default function AddStudentScreen() {
+
+  const [city, setCity] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const fetchLocation = async () => {
+    setLoading(true);
+    const {status} = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      console.log('Permission to access location was denied');
+      setLoading(false);
+      return;
+    }
+    const loc = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Highest,
+    });
+    const result = await Location.reverseGeocodeAsync(
+      {
+        latitude: loc.coords.latitude,
+        longitude: loc.coords.longitude,
+      }
+    );
+    setCity(result[0]?.city ?? "Unknown");
+    setLoading(false);
+
+  }
+
+
+
   return (
-    <SafeAreaView style={styles.screen}>
-      <View style={styles.container}>
-        <AddStudentForm />
-      </View>
-    </SafeAreaView>
+    <>
+      <Button
+        title={loading? "Fetching Location..." : "Fetch Location"}
+        onPress={fetchLocation}
+        disabled={loading}
+      />
+      {city && <Text>Detected City: {city}</Text>}
+    </>
+    
   );
 }
 
