@@ -60,8 +60,15 @@ export default function Index() {
         </Pressable>
       </View>
 
-      <SearchBar ref={searchRef} value={query} onChangeText={setQuery} debounceDelay={DEBOUNCE_DELAY} />
+      {/* Search */}
+      <SearchBar
+        ref={searchRef}
+        value={query}
+        onChangeText={setQuery}
+        debounceDelay={DEBOUNCE_DELAY}
+      />
 
+      {/* Student List */}
       <FlatList
         data={filtered}
         keyExtractor={(item) => item.id}
@@ -74,20 +81,43 @@ export default function Index() {
         )}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>No students match &quot;{query}&quot;</Text>
+            <Text style={styles.emptyText}>
+              No students match "{query}"
+            </Text>
           </View>
         }
       />
 
+      {/* Student Details */}
       {selectedStudent && (
-        <StudentDetail student={selectedStudent} onRemove={() => setSelectedStudent(null)} />
+        <StudentDetail
+          student={selectedStudent}
+          onRemove={() => setSelectedStudent(null)}
+        />
       )}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#F0F4F8" },
+  screen: {
+    flex: 1,
+    backgroundColor: "#F0F4F8",
+  },
+
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F0F4F8",
+  },
+
+  loadingText: {
+    marginTop: 10,
+    fontSize: 14,
+    color: "#64748B",
+  },
+
   titleBar: {
     flexDirection: "row",
     justifyContent: "space-between",
