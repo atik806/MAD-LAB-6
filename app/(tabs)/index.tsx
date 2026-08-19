@@ -18,40 +18,62 @@ import { useStudents } from "../../context/student-context";
 import { Student } from "../../data/students";
 import { useDebounced } from "../../hooks/use-debounce";
 
-
-
 export default function Index() {
-  const { students } = useStudents();
-  const searchRef = React.useRef<TextInput>(null);
+  const { students, isLoading } = useStudents();
+
+  const searchRef = useRef<TextInput>(null);
+
+  const [query, setQuery] = useState("");
+  const [selectedStudent, setSelectedStudent] =
+    useState<Student | null>(null);
+
+  const DEBOUNCE_DELAY = 300;
+
+  const debouncedQuery = useDebounced(query, DEBOUNCE_DELAY);
+
+  // Focus search bar when screen loads
   useEffect(() => {
     const timer = setTimeout(() => {
       searchRef.current?.focus();
     }, 300);
+
     return () => clearTimeout(timer);
   }, []);
-  const [query, setQuery] = useState("");
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
 
-  const DEBOUNCE_DELAY = 300;
-  const debouncedQuery = useDebounced(query, DEBOUNCE_DELAY);
+  // Show loading screen while students are loading
+  if (isLoading) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size="large" color="#0D1F4E" />
+        <Text style={styles.loadingText}>Loading students...</Text>
+      </View>
+    );
+  }
+
+  // Filter students
   const filtered = students.filter(
-    (s) =>
-      s.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
-      s.department.toLowerCase().includes(debouncedQuery.toLowerCase())
+    (student) =>
+      student.name
+        .toLowerCase()
+        .includes(debouncedQuery.toLowerCase()) ||
+      student.department
+        .toLowerCase()
+        .includes(debouncedQuery.toLowerCase())
   );
 
+  // Select / deselect student
   const handleSelect = useCallback((student: Student) => {
     setSelectedStudent((prev) =>
       prev?.id === student.id ? null : student
     );
   }, []);
 
-
-
   return (
     <SafeAreaView style={styles.screen}>
+      {/* Header */}
       <View style={styles.titleBar}>
         <Text style={styles.title}>Student Directory</Text>
+
         <Pressable
           style={styles.addButton}
           onPress={() => router.push("/(tabs)/add-student")}
