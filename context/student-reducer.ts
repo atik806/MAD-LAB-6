@@ -5,7 +5,8 @@ export type StudentState = Student[];
 export type StudentAction =
   | { type: "ADD_STUDENT"; payload: Student }
   | { type: "REMOVE_STUDENT"; payload: string }
-  | { type: "RESET" };
+  | { type: "RESET" }
+  | { type: "LOAD"; payload: StudentState };
 
 export function studentReducer(
   state: StudentState,
@@ -18,6 +19,8 @@ export function studentReducer(
       return state.filter((s) => s.id !== action.payload);
     case "RESET":
       return STUDENTS;
+    case "LOAD":
+      return action.payload;
     default:
       return state;
   }
