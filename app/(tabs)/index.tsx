@@ -1,6 +1,16 @@
 import { router } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
-import { FlatList, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+
 import SearchBar from "../../components/search-bar";
 import StudentDetail from "../../components/student-detail";
 import StudentItem from "../../components/student-item";
@@ -86,14 +96,33 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     backgroundColor: "#0D1F4E",
   },
-  title: { fontSize: 20, fontWeight: "bold", color: "#FFFFFF" },
+
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+  },
+
   addButton: {
     backgroundColor: "#0D9488",
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 8,
   },
-  addButtonText: { color: "#FFFFFF", fontWeight: "700", fontSize: 13 },
-  empty: { padding: 40, alignItems: "center" },
-  emptyText: { fontSize: 14, color: "#94A3B8" },
+
+  addButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "700",
+    fontSize: 13,
+  },
+
+  empty: {
+    padding: 40,
+    alignItems: "center",
+  },
+
+  emptyText: {
+    fontSize: 14,
+    color: "#94A3B8",
+  },
 });
